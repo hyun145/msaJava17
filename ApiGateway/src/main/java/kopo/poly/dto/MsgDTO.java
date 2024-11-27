@@ -7,6 +7,8 @@ import lombok.Builder;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public record MsgDTO(int result // 결과 코드
         , String msg // 결과 메시지
+
+
 ) {
 
 }
