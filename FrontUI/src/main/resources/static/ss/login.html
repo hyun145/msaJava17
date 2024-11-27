@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 화면</title>
+    <link rel="stylesheet" href="/css/table.css"/>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnUserReg").on("click", function () {
+                location.href = "/ss/userRegForm.html";
+            })
+            $("#btnMain").on("click", function () {
+                location.href = "/index.html";
+            })
+
+            $("#btnLogin").on("click", function () {
+                let f = document.getElementById("f");
+
+                if (f.user_id.value === "") {
+                    alert("아이디를 입력하세요.");
+                    f.user_id.focus();
+                    return;
+                }
+                if (f.password.value === "") {
+                    alert("비밀번호를 입력하세요.");
+                    f.password.focus();
+                    return;
+                }
+                $.ajax({
+                    url: "http://" + apiServer + "/login/v1/loginProc",
+                    type: "post", // 전송방식은 Post
+                    // contentType: "application/json",
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    dataType: "JSON", // 전송 결과는 JSON으로 받기
+                    data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                }).then(
+                    function (json) { // 성공
+
+                        if (json.data.result === 1) { // 로그인 성공
+                            alert(json.data.msg); // 메시지 띄우기
+                            location.href = "/user/loginResult.html"; // 로그인 성공 페이지 이동
+
+                        } else { // 로그인 실패
+                            alert(json.data.msg); // 메시지 띄우기
+                            $("#user_id").focus(); // 아이디 입력 항목에 마우스 커서 이동
+                        }
+
+                    },
+                    function () {
+                        alert("에러가 발생하였습니다. \n다음에 다시 시도하길 바랍니다."); // 메시지 띄우기
+                        $("#user_id").focus(); // 아이디 입력 항목에 마우스 커서 이동
+
+                    }
+                );
+
+            })
+        })
+    </script>
+</head>
+<body>
+<h2>로그인하기</h2>
+<hr/>
+<br/>
+<form id="f">
+    <div class="divTable minimalistBlack">
+        <div class="divTableBody">
+            <div class="divTableRow">
+                <div class="divTableCell">아이디
+                </div>
+                <div class="divTableCell">
+                    <input type="text" name="user_id" id="user_id" style="width:95%"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">비밀번호
+                </div>
+                <div class="divTableCell">
+                    <input type="password" name="password" id="password" style="width:95%"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button id="btnLogin" type="button">로그인</button>
+        <button id="btnUserReg" type="button">회원가입</button>
+        <button id="btnMain" type="button">메인화면</button>
+    </div>
+</form>
+</body>
+</html>

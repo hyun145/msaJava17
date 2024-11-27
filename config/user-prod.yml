@@ -1,0 +1,54 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    beans:
+      enabled: true
+    info:
+      enabled: true
+    shutdown:
+      enabled: true
+spring:
+  jpa:
+    generate-ddl: 'false'
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        format_sql: 'true'
+        use_sql_comments: 'true'
+    show-sql: 'true'
+    open-in-view: 'false'
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    password: ${MARIADB_PASSWORD}
+    username: ${MARIADB_USER}
+    url: jdbc:mariadb://${MARIADB_IP}:${MARIADB_PORT}/myDB
+  application:
+    name: USER-SERVICE
+
+jwt:
+  token:
+    creator: poly
+    refresh:
+      valid:
+        time: '3000'
+      name: jwtRefreshToken
+    access:
+      valid:
+        time: '300'
+      name: jwtAccessToken
+    secret:
+      key: '12345678123456781234567812345678123456781234'
+server:
+  port: ${USER_SERVICE_PORT}
+api:
+  gateway: ${API_GATEWAY_IP}:${API_GATEWAY_PORT}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>게시판 글쓰기</title>
+    <link rel="stylesheet" href="/css/table.css"/>
+    <script type="text/javascript" src="/js/common.js"></script>
+    <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnSend").on("click", function () {
+                doSubmit();
+
+            })
+
+
+        })
+        function doSubmit() {
+
+            let f = document.getElementById("f");
+
+            if (f.title.value === "") {
+
+                alert("제목을 입력하시기 바랍니다.");
+                f.title.focus();
+                return
+
+            }
+            if (calBytes(f.title.value) > 200) {
+                alert("최대 200Bytes까지 입력 가능합니다.");
+                f.title.focus()
+                return;
+            }
+            let noticeCheck = false;
+            for (let i =0; i <f.noticeYn.length; i ++) {
+                if (f.noticeYn[i].checked) {
+                    noticeCheck = true;
+                    break;
+                }
+            }
+            if (noticeCheck === false) {
+                alert("공지글 여부를 선택하시기 바랍니다.");
+                f.noticeYn[0].focus();
+                return;
+            }
+            if (f.contents.value === "") {
+                alert("내용을 입력하시기 바랍니다.");
+                f.contents.focus();
+                return
+            }
+            if (calBytes(f.contents.value) > 4000) {
+                alert("최대 4000Byte까지 입력 가능합니다.");
+                f.contents.focus();
+                return;
+            }
+
+            $.ajax({
+                url: "http://" + apiServer + "/notice/v1/noticeInsert",
+                type: "POST",
+                dataType: "JSON",
+                data: $("#f").serialize(),
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (json) {
+                    alert(json.msg);
+                    location.href = "/notice/noticeList.html";
+                }
+            })
+        }
+
+    </script>
+</head>
+
+<body>
+<h2>공지사항 등록하기</h2>
+<hr/>
+<br/>
+<form name="f" id="f">
+    <div class="divTable minimalistBlack">
+        <div class="divTableBody">
+            <div class="divTableRow">
+                <div class="divTableCell">제목
+                </div>
+                <div class="divTableCell">
+                    <input type="text" name="title" maxlength="100" style="width: 50%"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">공지글 여부
+                </div>
+                <div class="divTableCell">
+                    예<input type="radio" name="noticeYn" value="Y"/>
+                    아니오 <input type="radio" name="noticeYn" value="N"/>
+                </div>
+            </div>
+            <div class="divTableRow">
+                <div class="divTableCell">내용</div>
+                <div class="divTableCell">
+                    <textarea name="contents" style="width: 100%"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button id="btnSend" type="button">등록</button>
+        <button type="reset">다시 작성</button>
+    </div>
+</form>
+</body>
+</html>
